@@ -15,6 +15,7 @@ export interface Admin {
 export type DispatcherStatus = 'ONLINE' | 'OFFLINE';
 export type OnboardingStatus = 'pending_documents' | 'approved';
 export type DocumentStatus = 'pending' | 'approved' | 'rejected';
+export type DocumentReviewAction = 'approved' | 'rejected';
 
 export interface Dispatcher {
   id: number;
@@ -117,7 +118,7 @@ export interface Delivery {
   dispatcher_id: number | null;
   status: DeliveryStatus;
   payment_status: PaymentStatus;
-  payment_method: 'cash' | 'wallet' | 'card';
+  payment_method: 'cash' | 'wallet' | 'card' | null;
   currency: string;
   base_fare: number;
   total_amount: number;
@@ -160,12 +161,19 @@ export interface DeliveryDetail extends Delivery {
   issues: DeliveryIssue[];
 }
 
+export interface DeliveryOtp {
+  id: number;
+  delivery_id: number;
+  code: string;
+  is_used: boolean;
+  created_at: string;
+}
+
 export interface TrackingStep {
   id: number;
   delivery_id: number;
-  status: string;
-  title: string;
-  subtitle: string | null;
+  step: string;
+  description: string;
   created_at: string;
 }
 
@@ -198,6 +206,13 @@ export interface WalletTransaction {
   status: string;
   user_id: number;
   created_at: string;
+  wallet?: {
+    user?: {
+      first_name: string;
+      last_name: string;
+      phone_number: string;
+    };
+  };
 }
 
 export interface Wallet {

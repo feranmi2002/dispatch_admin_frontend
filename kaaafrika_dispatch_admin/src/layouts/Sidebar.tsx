@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Truck,
   Package,
+  Map,
   Wallet,
   Settings,
   LogOut,
@@ -18,6 +19,7 @@ import logo from '../assets/horizontal_logo.svg';
 
 const navItems = [
   { to: '/',             icon: LayoutDashboard, label: 'Dashboard'   },
+  { to: '/live-map',     icon: Map,             label: 'Live Map'    },
   { to: '/dispatchers',  icon: Truck,           label: 'Dispatchers' },
   { to: '/deliveries',   icon: Package,         label: 'Delivery History'  },
   { to: '/wallet',       icon: Wallet,          label: 'Wallet'      },
@@ -41,7 +43,7 @@ export function Sidebar() {
   return (
     <aside
       className={clsx(
-        'relative flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out flex-shrink-0',
+        'relative flex flex-col bg-slate-800 border-r border-slate-700 transition-all duration-300 ease-in-out flex-shrink-0',
         collapsed ? 'w-[68px]' : 'w-[228px]'
       )}
     >

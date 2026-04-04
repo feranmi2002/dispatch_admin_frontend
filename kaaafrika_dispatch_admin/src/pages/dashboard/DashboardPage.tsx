@@ -53,14 +53,18 @@ export function DashboardPage() {
 
   const stats = dashboardData?.data;
 
+  type DispatchesByDay = { date: string; count: number };
   const dispatchesData = stats?.charts?.dispatches_by_day;
-  const rawChartData = dispatchesData
+  const rawChartData: DispatchesByDay[] = dispatchesData
     ? (Array.isArray(dispatchesData)
         ? dispatchesData
-        : Object.entries(dispatchesData).map(([date, count]) => ({ date, count })))
+        : Object.entries(dispatchesData).map(([date, count]) => ({
+            date,
+            count: Number(count),
+          })))
     : [];
 
-  const chartData = rawChartData.map((d: any) => ({
+  const chartData = rawChartData.map((d) => ({
     date: formatDate(d.date),
     count: d.count,
   }));
@@ -130,7 +134,7 @@ export function DashboardPage() {
               <p className="section-title">Delivery Volumes</p>
               <p className="text-xs text-slate-400 mt-0.5">
                 {stats?.period.from && stats?.period.to
-                  ? `${stats.period.from} → ${stats.period.to}`
+                  ? `${stats.period.from} -> ${stats.period.to}`
                   : 'Loading...'}
               </p>
             </div>

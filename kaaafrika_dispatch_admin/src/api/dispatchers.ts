@@ -6,7 +6,7 @@ import type {
   DispatcherFilters,
   DispatcherLocation,
   DispatcherStats,
-  DocumentStatus,
+  DocumentReviewAction,
   PaginatedResponse,
   Wallet,
   Delivery,
@@ -52,7 +52,7 @@ export const dispatchersApi = {
   reviewDocument: async (
     dispatcherId: number,
     docId: number,
-    action: DocumentStatus,
+    action: DocumentReviewAction,
     reason?: string
   ) => {
     const { data } = await apiClient.post(
@@ -65,7 +65,7 @@ export const dispatchersApi = {
   reviewVehicleDocument: async (
     dispatcherId: number,
     docId: number,
-    action: DocumentStatus,
+    action: DocumentReviewAction,
     reason?: string
   ) => {
     const { data } = await apiClient.post(

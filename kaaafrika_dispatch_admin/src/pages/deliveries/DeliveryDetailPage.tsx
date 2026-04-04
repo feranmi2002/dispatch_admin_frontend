@@ -17,7 +17,8 @@ import {
 import toast from 'react-hot-toast';
 import { deliveriesApi } from '../../api/deliveries';
 import { dispatchersApi } from '../../api/dispatchers';
-import { Badge, deliveryStatusBadge, paymentStatusBadge } from '../../components/ui/Badge';
+import { Badge } from '../../components/ui/Badge';
+import { deliveryStatusBadge, paymentStatusBadge } from '../../components/ui/badgeUtils';
 import { Modal } from '../../components/ui/Modal';
 import type { PayoutStatus } from '../../types';
 import { clsx } from 'clsx';
@@ -43,6 +44,14 @@ export function DeliveryDetailPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['delivery', deliveryId],
     queryFn: () => deliveriesApi.getOne(deliveryId),
+  });
+
+  const otpRequired = data?.data?.otp_required ?? false;
+  const { data: otpData } = useQuery({
+    queryKey: ['delivery-otp', deliveryId],
+    queryFn: () => deliveriesApi.getOtp(deliveryId),
+    enabled: otpRequired,
+    retry: false,
   });
 
   const { data: dispatchersData } = useQuery({
@@ -115,7 +124,11 @@ export function DeliveryDetailPage() {
 
   const statusBadge = deliveryStatusBadge(delivery.status);
   const payBadge = paymentStatusBadge(delivery.payment_status);
-  const currentStepIdx = STATUS_STEPS.indexOf(delivery.status);
+  const currentStepIdx = Math.max(STATUS_STEPS.indexOf(delivery.status), 0);
+  const paymentMethod =
+    typeof delivery.payment_method === 'string' && delivery.payment_method.length > 0
+      ? delivery.payment_method.toUpperCase()
+      : '—';
 
   const isCancellable = !['delivered', 'cancelled'].includes(delivery.status);
   const isConfirmable = delivery.status === 'delivering' || delivery.status === 'picked_up';
@@ -261,7 +274,7 @@ export function DeliveryDetailPage() {
             <DetailItem label="Base Fare" value={formatCurrency(delivery.base_fare)} />
             <DetailItem label="Total Amount" value={formatCurrency(delivery.total_amount)} highlight />
             <DetailItem label="Payout" value={formatCurrency(delivery.payout_amount)} />
-            <DetailItem label="Payment Method" value={delivery.payment_method.toUpperCase()} />
+            <DetailItem label="Payment Method" value={paymentMethod} />
           </div>
 
           {/* Payout status */}
@@ -299,6 +312,26 @@ export function DeliveryDetailPage() {
               )}
             </div>
           </div>
+
+          {delivery.otp_required && (
+            <div className="pt-3 border-t border-slate-100">
+              <p className="text-[10px] text-slate-400 font-semibold uppercase">Delivery OTP</p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-sm font-semibold text-slate-700">
+                  {otpData?.data?.code ?? 'Not available'}
+                </p>
+                {otpData?.data ? (
+                  otpData.data.is_used ? (
+                    <Badge label="Used" variant="slate" />
+                  ) : (
+                    <Badge label="Active" variant="green" />
+                  )
+                ) : (
+                  <Badge label="Unavailable" variant="slate" />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -336,8 +369,10 @@ export function DeliveryDetailPage() {
                     )}
                   </div>
                   <div className="pb-3">
-                    <p className="text-xs font-semibold text-slate-700 capitalize">{step.status.replace('_', ' ')}</p>
-                    <p className="text-[11px] text-slate-400">{step.title} {step.subtitle ? ` - ${step.subtitle}` : ''}</p>
+                    <p className="text-xs font-semibold text-slate-700 capitalize">
+                      {(step.step ?? '').replace('_', ' ')}
+                    </p>
+                    <p className="text-[11px] text-slate-400">{step.description}</p>
                     <p className="text-[10px] text-slate-300 mt-0.5">
                       {new Date(step.created_at).toLocaleString()}
                     </p>
@@ -431,7 +466,7 @@ export function DeliveryDetailPage() {
                 </div>
                 <div className="text-left">
                   <p className="font-medium text-xs">{d.name}</p>
-                  <p className="text-[10px] text-slate-400">{d.phone_number} · {d.status}</p>
+                  <p className="text-[10px] text-slate-400">{d.phone_number} Â· {d.status}</p>
                 </div>
               </button>
             ))}

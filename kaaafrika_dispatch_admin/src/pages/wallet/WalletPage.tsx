@@ -5,17 +5,21 @@ import { walletApi } from '../../api/wallet';
 import { Pagination } from '../../components/ui/Pagination';
 import { clsx } from 'clsx';
 import { Badge } from '../../components/ui/Badge';
+import type { WalletTransaction } from '../../types';
 
 export function WalletPage() {
   const [page, setPage] = useState(1);
   const { data, isLoading } = useQuery({
     queryKey: ['wallet-transactions', page],
-    queryFn: () => walletApi.getTransactions(page),
+    queryFn: () => walletApi.getTransactions(page, 15),
     placeholderData: (prev) => prev,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 
-  const transactions = data?.data?.data ?? [];
+  const transactions = (data?.data?.data ?? []) as WalletTransaction[];
   const meta = data?.data;
+  const hasPagination = (meta?.last_page ?? 0) > 1;
 
   const formatCurrency = (n: number | string) => {
     return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(n));
@@ -53,7 +57,7 @@ export function WalletPage() {
                 </td>
               </tr>
             ) : (
-              transactions.map((tx: any) => (
+              transactions.map((tx) => (
                 <tr key={tx.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -93,7 +97,7 @@ export function WalletPage() {
             )}
           </tbody>
         </table>
-        {meta?.last_page > 1 && (
+        {hasPagination && meta && (
           <div className="border-t border-slate-100 p-4">
             <Pagination
               currentPage={page}

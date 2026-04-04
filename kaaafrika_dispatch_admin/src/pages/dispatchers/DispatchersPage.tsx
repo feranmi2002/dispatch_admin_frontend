@@ -39,10 +39,10 @@ export function DispatchersPage() {
     <div className="space-y-5 animate-fade-in">
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label="Total"    value={stats?.total ?? '—'}            icon={Users}   loading={statsLoading} iconColor="text-slate-600"  iconBg="bg-slate-100" />
-        <StatCard label="Online"   value={stats?.online ?? '—'}           icon={Wifi}    loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
-        <StatCard label="Pending"  value={stats?.pending_approval ?? '—'} icon={Clock}   loading={statsLoading} iconColor="text-amber-600"  iconBg="bg-amber-50" />
-        <StatCard label="Suspended"value={stats?.suspended ?? '—'}        icon={Shield}  loading={statsLoading} iconColor="text-red-500"    iconBg="bg-red-50" />
+        <StatCard label="Total"    value={statsLoading ? '—' : (stats?.total ?? 0)}            icon={Users}   loading={statsLoading} iconColor="text-slate-600"  iconBg="bg-slate-100" />
+        <StatCard label="Online"   value={statsLoading ? '—' : (stats?.online ?? 0)}           icon={Wifi}    loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
+        <StatCard label="Pending"  value={statsLoading ? '—' : (stats?.pending_approval ?? 0)} icon={Clock}   loading={statsLoading} iconColor="text-amber-600"  iconBg="bg-amber-50" />
+        <StatCard label="Suspended"value={statsLoading ? '—' : (stats?.suspended ?? 0)}        icon={Shield}  loading={statsLoading} iconColor="text-red-500"    iconBg="bg-red-50" />
       </div>
 
       {/* Filters row */}
@@ -125,9 +125,9 @@ export function DispatchersPage() {
       </div>
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card overflow-x-auto">
         <div className={clsx('transition-opacity', isFetching ? 'opacity-60' : 'opacity-100')}>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[900px]">
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
@@ -228,7 +228,7 @@ export function DispatchersPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 hidden lg:table-cell text-slate-500 text-xs">
-                          {d.vehicle_make} {d.vehicle_model} · {d.license_plate}
+                          {d.vehicle_make} {d.vehicle_model} Â· {d.license_plate}
                         </td>
                         <td className="px-4 py-3 hidden lg:table-cell text-slate-400 text-xs">
                           {new Date(d.created_at).toLocaleDateString()}

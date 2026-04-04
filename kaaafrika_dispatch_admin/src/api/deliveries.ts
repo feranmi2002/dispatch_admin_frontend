@@ -4,6 +4,7 @@ import type {
   Delivery,
   DeliveryDetail,
   DeliveryFilters,
+  DeliveryOtp,
   DeliveryStats,
   PayoutStatus,
   PaginatedResponse,
@@ -31,7 +32,7 @@ export const deliveriesApi = {
   },
 
   getOtp: async (id: number) => {
-    const { data } = await apiClient.get(`/deliveries/${id}/otp`);
+    const { data } = await apiClient.get<ApiResponse<DeliveryOtp>>(`/deliveries/${id}/otp`);
     return data;
   },
 

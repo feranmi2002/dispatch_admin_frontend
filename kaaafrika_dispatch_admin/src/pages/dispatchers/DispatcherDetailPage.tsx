@@ -19,7 +19,7 @@ import { dispatchersApi } from '../../api/dispatchers';
 import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { Pagination } from '../../components/ui/Pagination';
-import type { DocumentStatus } from '../../types';
+import type { DocumentReviewAction } from '../../types';
 import { clsx } from 'clsx';
 
 const TABS = ['Profile', 'Documents', 'Vehicle Docs', 'Deliveries', 'Wallet'] as const;
@@ -103,7 +103,7 @@ export function DispatcherDetailPage() {
       isVehicle,
     }: {
       docId: number;
-      action: DocumentStatus;
+      action: DocumentReviewAction;
       reason?: string;
       isVehicle: boolean;
     }) =>
@@ -356,8 +356,8 @@ export function DispatcherDetailPage() {
       )}
 
       {activeTab === 'Deliveries' && (
-        <div className="card overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="card overflow-x-auto">
+          <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500">Tracking</th>
@@ -430,11 +430,11 @@ export function DispatcherDetailPage() {
           </div>
 
           {/* Transactions */}
-          <div className="card overflow-hidden">
+          <div className="card overflow-x-auto">
             <div className="px-5 py-3 border-b border-slate-100">
               <p className="section-title">Transactions</p>
             </div>
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[640px]">
               <thead>
                 <tr className="border-b border-slate-50">
                   <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500">Type</th>

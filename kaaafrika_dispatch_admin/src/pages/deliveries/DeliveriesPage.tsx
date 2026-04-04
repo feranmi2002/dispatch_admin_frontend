@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Package, CheckCircle, XCircle, Clock, DollarSign, Filter } from 'lucide-react';
 import { deliveriesApi } from '../../api/deliveries';
 import { StatCard } from '../../components/ui/StatCard';
-import { Badge, deliveryStatusBadge, paymentStatusBadge } from '../../components/ui/Badge';
+import { Badge } from '../../components/ui/Badge';
+import { deliveryStatusBadge, paymentStatusBadge } from '../../components/ui/badgeUtils';
 import { Pagination } from '../../components/ui/Pagination';
 import { SearchInput } from '../../components/ui/SearchInput';
 import type { DeliveryFilters, DeliveryStatus, PaymentStatus } from '../../types';
@@ -14,6 +15,7 @@ const STATUS_OPTIONS: { label: string; value: DeliveryStatus | '' }[] = [
   { label: 'All',        value: ''          },
   { label: 'Pending',    value: 'pending'   },
   { label: 'Assigned',   value: 'assigned'  },
+  { label: 'Accepted',   value: 'accepted'  },
   { label: 'Picking up', value: 'picked_up' },
   { label: 'Delivering', value: 'delivering'},
   { label: 'Delivered',  value: 'delivered' },
@@ -67,10 +69,10 @@ export function DeliveriesPage() {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label="Total (Week)"  value={statsLoading ? '—' : totalCount}                           icon={Package}      loading={statsLoading} iconColor="text-brand-500" iconBg="bg-brand-50" />
-        <StatCard label="Revenue"       value={statsLoading ? '—' : formatCurrency(stats?.total_revenue ?? 0)} icon={DollarSign}   loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
-        <StatCard label="Delivered"     value={statsLoading ? '—' : (stats?.status_counts.delivered ?? 0)} icon={CheckCircle}  loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
-        <StatCard label="Cancelled"     value={statsLoading ? '—' : (stats?.status_counts.cancelled ?? 0)} icon={XCircle}      loading={statsLoading} iconColor="text-red-500"    iconBg="bg-red-50" />
+        <StatCard label="Total (Week)"  value={statsLoading ? 'â' : totalCount}                           icon={Package}      loading={statsLoading} iconColor="text-brand-500" iconBg="bg-brand-50" />
+        <StatCard label="Revenue"       value={statsLoading ? 'â' : formatCurrency(stats?.total_revenue ?? 0)} icon={DollarSign}   loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
+        <StatCard label="Delivered"     value={statsLoading ? 'â' : (stats?.status_counts.delivered ?? 0)} icon={CheckCircle}  loading={statsLoading} iconColor="text-emerald-600" iconBg="bg-emerald-50" />
+        <StatCard label="Cancelled"     value={statsLoading ? 'â' : (stats?.status_counts.cancelled ?? 0)} icon={XCircle}      loading={statsLoading} iconColor="text-red-500"    iconBg="bg-red-50" />
       </div>
 
       {/* Filters */}
@@ -146,9 +148,9 @@ export function DeliveriesPage() {
       </div>
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card overflow-x-auto">
         <div className={clsx('transition-opacity', isFetching ? 'opacity-60' : 'opacity-100')}>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[980px]">
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500">Tracking</th>
@@ -194,7 +196,9 @@ export function DeliveriesPage() {
                         <td className="px-4 py-3 hidden lg:table-cell">
                           <div className="text-xs text-slate-500 max-w-[180px]">
                             <p className="truncate">{d.pickup_address}</p>
-                            <p className="truncate text-slate-400">→ {d.dropoff_address}</p>
+                            <p className="truncate text-slate-400">
+                              {'\u2192'} {d.dropoff_address}
+                            </p>
                           </div>
                         </td>
                         <td className="px-4 py-3">
@@ -204,10 +208,10 @@ export function DeliveriesPage() {
                           <Badge label={payBadge.label} variant={payBadge.variant} />
                         </td>
                         <td className="px-4 py-3 hidden lg:table-cell text-xs font-medium text-slate-700">
-                          ₦{d.total_amount.toLocaleString()}
+                          {'\u20A6'}{d.total_amount.toLocaleString()}
                         </td>
                         <td className="px-4 py-3 hidden lg:table-cell text-xs text-slate-500">
-                          {d.dispatcher?.name ?? '—'}
+                          {d.dispatcher?.name ?? '\u2014'}
                         </td>
                         <td className="px-4 py-3 hidden xl:table-cell text-xs text-slate-400">
                           {new Date(d.created_at).toLocaleDateString()}
